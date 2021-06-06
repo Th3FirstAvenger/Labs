@@ -1,0 +1,49 @@
+version: '2'
+services:
+ web:
+   image: vulhub/phpmyadmin:4.8.1
+   volumes:
+    - ./config.inc.php:/var/www/html/config.inc.php
+    - web:/var/www/html
+    - config:/home/user/.ssh/
+   ports:
+    - "8080:80"
+   depends_on:
+    - mysql
+ mysql:
+   build: .
+   volumes:
+    - web:/var/www/html
+    - config:/home/user/.ssh/
+   ports:
+    - "3306:3306"
+   environment: 
+    - MYSQL_RANDOM_ROOT_PASSWORD=yes
+    - MYSQL_DATABASE=test
+    - MYSQL_USER=test
+    - MYSQL_PASSWORD=test
+  
+ openssh-server:
+   image: ghcr.io/linuxserver/openssh-server
+   container_name: openssh-server
+   hostname: openssh-server #optional
+   environment:
+    - PUID=1000
+    - PGID=1000
+    - TZ=Europe/London
+    - SUDO_ACCESS=false #optional
+    - PASSWORD_ACCESS=true #optional
+    - USER_PASSWORD=password #optional
+    - USER_NAME=user #optional
+   volumes:
+    - /tmp/php_myadmin/user.txt:/home/user/user.txt
+    - /tmp/php_myadmin/root.txt:/root/root.txt
+    - config:/config/ssh_host_keys
+
+   ports:
+    - 2222:2222
+   restart: unless-stopped
+
+volumes: 
+    web:
+    config:

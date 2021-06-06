@@ -1,0 +1,13 @@
+version: '2.1'
+
+services:
+  web:
+    image: lfi-labs
+    hostname: lfiweb
+    build:
+      context: .
+    ports:
+      - "8888:80"
+    volumes:
+      - '/tmp/flags_lfi/root.txt:/root/root.txt'
+      - '/tmp/flags_lfi/user.txt:/home/user/user.txt'
